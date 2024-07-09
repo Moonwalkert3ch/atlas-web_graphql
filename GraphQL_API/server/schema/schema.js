@@ -55,7 +55,7 @@ const TaskType = new GraphQLObjectType({
 // Task 3 Define Project Type using GraphQLID
 const ProjectType = new GraphQLObjectType({
     name: "Project",
-    fields: {
+    fields: () => ({
         id: { type: GraphQLID },
         title: { type: GraphQLString },
         weight: { type: GraphQLInt },
@@ -66,7 +66,7 @@ const ProjectType = new GraphQLObjectType({
                 return _.filter(tasks, { projectId: parent.id });
             }
         }
-    },
+    })
 });
 
 // Define the Root Query type
@@ -94,6 +94,20 @@ const RootQuery = new GraphQLObjectType({
                 return _.find(projects, { id: args.id });
             },
         },
+        // GraphQLList Root Query Type
+        tasks: {
+            type: new GraphQLList(TaskType),
+            resolve: () => {
+                return tasks;
+            }
+        },
+
+        projects: {
+            type: new GraphQLList(ProjectType),
+            resolve: () => {
+                return projects;
+            }
+        }
     },
 });
 
