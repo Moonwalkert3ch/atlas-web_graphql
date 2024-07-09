@@ -1,0 +1,7 @@
+mutation {
+  addProject(title: "Bootstrap", weight: 2, description: "Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first fornt-end web development.") {
+    title
+    weight
+    description
+  }
+}

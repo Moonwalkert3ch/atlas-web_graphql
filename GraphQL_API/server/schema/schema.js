@@ -1,4 +1,4 @@
-const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema, GraphQLID, GraphQLList } = require("graphql");
+const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema, GraphQLID, GraphQLList, GraphQLNonNull } = require("graphql");
 const _ = require("lodash");
 
 // Dummy data for tasks
@@ -69,6 +69,49 @@ const ProjectType = new GraphQLObjectType({
     })
 });
 
+// Using Mutation to add project and task to the db
+const Mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: () => ({
+        addProject: {
+            type: ProjectType,
+            args: {
+                title: { type: new GraphQLNonNull(GraphQLString) },
+                weight: { type: new GraphQLNonNull(GraphQLInt) },
+                description: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                const Project = {
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description
+                };
+                projects.push(Project);
+                return Project;
+            }
+        },
+        addTask: {
+            type: TaskType,
+            args: {
+                title: { type: new GraphQLNonNull(GraphQLString) },
+                weight: { type: new GraphQLNonNull(GraphQLInt) },
+                description: { type: new GraphQLNonNull(GraphQLString) },
+                projectId: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                const Task = {
+                    title: args.title,
+                    weight: args.weight,
+                    description: args.description,
+                    projectId: args.projectId
+                };
+                tasks.push(Task);
+                return Task;
+            }
+        }
+    })
+});
+
 // Define the Root Query type
 
 const RootQuery = new GraphQLObjectType({
@@ -113,6 +156,7 @@ const RootQuery = new GraphQLObjectType({
 
 const schema = new GraphQLSchema({
     query: RootQuery,
+    mutation: Mutation,
 });
 
 module.exports = schema;
